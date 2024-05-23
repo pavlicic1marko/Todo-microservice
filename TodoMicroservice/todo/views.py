@@ -21,7 +21,11 @@ def getRoutes(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getProducts(request):
-    return Response(products)
+
+    todo = Todo.objects.all()
+    serializer = TodoSerializer(todo, many=True)
+
+    return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -31,7 +35,10 @@ def getProductsById(request, pk):
         if i['_id'] == pk:
             product = i
             break
+
+
     return Response(product)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
