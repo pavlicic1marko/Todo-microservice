@@ -3,6 +3,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from .todos import products
+from todo.models import Todo
+from todo.serializer import TodoSerializer
+
+
 
 
 # Create your views here.
@@ -28,3 +32,9 @@ def getProductsById(request, pk):
             product = i
             break
     return Response(product)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def createTodo(request):
+    data = request.data
+    pass
