@@ -1,10 +1,11 @@
 from django.shortcuts import render
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from todo.models import Todo
 from todo.serializer import TodoSerializer
-
+import django.core.exceptions
 
 
 
@@ -44,3 +45,20 @@ def getProductsById(request, pk):
 def createTodo(request):
     data = request.data
     pass
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delTodo(request, pk):
+    todo_id = pk
+
+    try:
+        todo = Todo.objects.get(_id=todo_id)
+        todo.delete()
+        return Response('todo is deleted', status=200)
+
+    except django.core.exceptions.ObjectDoesNotExist:
+
+        return Response('todo with id:'+ todo_id+ ', does not exist', status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+
+        return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
