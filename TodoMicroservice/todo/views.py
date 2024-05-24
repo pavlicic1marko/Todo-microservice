@@ -2,7 +2,6 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from .todos import products
 from todo.models import Todo
 from todo.serializer import TodoSerializer
 
@@ -18,6 +17,7 @@ def getRoutes(request):
     return Response(routes)
 
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getProducts(request):
@@ -27,17 +27,16 @@ def getProducts(request):
 
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def getProductsById(request, pk):
-    product = None
-    for i in products:
-        if i['_id'] == pk:
-            product = i
-            break
+
+    todo = Todo.objects.get(_id=pk)
+    serializer = TodoSerializer(todo, many=False)
 
 
-    return Response(product)
+    return Response(serializer.data)
 
 
 @api_view(['POST'])
