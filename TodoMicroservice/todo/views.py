@@ -36,8 +36,11 @@ def getProductsById(request, pk):
             product = i
             break
 
+    todo = Todo.objects.get(_id=pk)
+    serializer = TodoSerializer(todo, many=False)
 
-    return Response(product)
+
+    return Response(serializer.data)
 
 
 @api_view(['POST'])
