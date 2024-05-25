@@ -21,9 +21,9 @@ def getRoutes(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getProducts(request):
+def getTodoByUserId(request):
 
-    todo = Todo.objects.all()
+    todo = Todo.objects.filter(user_id=1)
     serializer = TodoSerializer(todo, many=True)
 
     return Response(serializer.data)
