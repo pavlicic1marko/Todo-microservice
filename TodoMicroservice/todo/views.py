@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from todo.models import Todo
 from todo.serializer import TodoSerializer
 import django.core.exceptions
-
+import jwt
+from django.conf import settings
 
 
 # Create your views here.
@@ -21,9 +22,14 @@ def getRoutes(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getProducts(request):
+def getTodoByUserId(request):
 
-    todo = Todo.objects.all()
+    bearer_token = request.headers['Authorization'].split()[1]
+    payload = jwt.decode(jwt=bearer_token, key=settings.SIMPLE_JWT['SIGNING_KEY'], algorithms=['HS256'])
+    use_id = payload['user_id']
+
+
+    todo = Todo.objects.filter(user_id=use_id)
     serializer = TodoSerializer(todo, many=True)
 
     return Response(serializer.data)
