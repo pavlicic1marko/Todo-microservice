@@ -50,7 +50,19 @@ def getProductsById(request, pk):
 @permission_classes([IsAuthenticated])
 def createTodo(request):
     data = request.data
-    pass
+
+    bearer_token = request.headers['Authorization'].split()[1]
+    payload = jwt.decode(jwt=bearer_token, key=settings.SIMPLE_JWT['SIGNING_KEY'], algorithms=['HS256'])
+    use_id = payload['user_id']
+
+    todo = Todo.objects.create(
+        user_id=use_id,
+        title = data['title'],
+        description = data['description']
+        )
+    serializer = TodoSerializer(todo, many=False)
+    return Response(serializer.data)
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
