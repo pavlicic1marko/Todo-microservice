@@ -51,10 +51,14 @@ def getProductsById(request, pk):
 def createTodo(request):
     data = request.data
 
+    bearer_token = request.headers['Authorization'].split()[1]
+    payload = jwt.decode(jwt=bearer_token, key=settings.SIMPLE_JWT['SIGNING_KEY'], algorithms=['HS256'])
+    use_id = payload['user_id']
+
     todo = Todo.objects.create(
-        user_id=1,
-        title = 'test title',
-        description = 'test description'
+        user_id=use_id,
+        title = data['title'],
+        description = data['description']
         )
     serializer = TodoSerializer(todo, many=False)
     return Response(serializer.data)
